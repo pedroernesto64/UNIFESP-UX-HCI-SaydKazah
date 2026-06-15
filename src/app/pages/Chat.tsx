@@ -23,19 +23,45 @@ const categoryLabels: Record<string, string> = {
   music: 'Música', theater: 'Teatro', food: 'Gastronomia', art: 'Arte', workshop: 'Oficina', other: 'Outros',
 };
 
-export function Chat() {
-  const navigate = useNavigate();
-  const theme = useTheme();
-  const [messages, setMessages] = useState<Message[]>([{
+const getInitialMessages = (): Message[] => {
+  try {
+    const saved = localStorage.getItem('chat_messages');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((m: any) => ({
+          ...m,
+          timestamp: new Date(m.timestamp),
+        }));
+      }
+    }
+  } catch (e) {
+    console.error('Error loading chat messages:', e);
+  }
+  return [{
     id: '1',
     text: 'Olá! Sou o Sayd, seu assistente cultural. Posso recomendar eventos baseados no que você gosta. O que te interessa?',
     sender: 'ai',
     timestamp: new Date(),
-  }]);
+  }];
+};
+
+export function Chat() {
+  const navigate = useNavigate();
+  const theme = useTheme();
+  const [messages, setMessages] = useState<Message[]>(getInitialMessages);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('chat_messages', JSON.stringify(messages));
+    } catch (e) {
+      console.error('Error saving chat messages:', e);
+    }
+  }, [messages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
