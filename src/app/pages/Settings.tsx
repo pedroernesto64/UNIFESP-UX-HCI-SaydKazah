@@ -26,7 +26,7 @@ export function Settings() {
 
   return (
     <Box sx={{ minHeight: '100%', bgcolor: theme.palette.background.default }}>
-      <Box sx={{ bgcolor: '#ff4e00', color: 'white', p: 3, pb: 4 }}>
+      <Box sx={{ bgcolor: '#ff4e00', color: 'white', p: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'sticky', top: 0, zIndex: 1100 }}>
         <Typography variant="h5">Configurações</Typography>
         <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
           Personalize sua experiência
@@ -84,10 +84,6 @@ export function Settings() {
             <ListItem>
               <ListItemIcon><Language sx={{ color: '#ff4e00' }} /></ListItemIcon>
               <ListItemText primary="Idioma" secondary="Português (Brasil)" />
-            </ListItem>
-            <Divider />
-            <ListItem>
-              <ListItemText primary="Versão do app" secondary="1.0.0" />
             </ListItem>
           </List>
         </Card>
