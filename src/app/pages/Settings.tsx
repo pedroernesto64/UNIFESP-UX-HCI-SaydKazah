@@ -10,23 +10,34 @@ import {
   Divider,
   useTheme,
 } from '@mui/material';
-import { DarkMode, LightMode, Notifications, Language } from '@mui/icons-material';
+import { DarkMode, LightMode, Notifications, Language, Contrast } from '@mui/icons-material';
 import { useState } from 'react';
 import { useThemeMode } from '../context/ThemeContext';
 
 export function Settings() {
   const theme = useTheme();
-  const { darkMode, toggleDarkMode } = useThemeMode();
+  const { darkMode, toggleDarkMode, highContrast, toggleHighContrast } = useThemeMode();
   const [notifications, setNotifications] = useState(true);
 
   const switchSx = {
-    '& .MuiSwitch-switchBase.Mui-checked': { color: '#ff4e00' },
-    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: '#ff4e00' },
+    '& .MuiSwitch-switchBase.Mui-checked': { color: theme.palette.primary.main },
+    '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': { bgcolor: theme.palette.primary.main },
   };
 
   return (
     <Box sx={{ minHeight: '100%', bgcolor: theme.palette.background.default }}>
-      <Box sx={{ bgcolor: '#ff4e00', color: 'white', p: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'sticky', top: 0, zIndex: 1100 }}>
+      <Box sx={{
+        bgcolor: 'primary.main',
+        color: 'primary.contrastText',
+        p: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1100,
+        borderBottom: highContrast ? '2px solid #ffffff' : 'none'
+      }}>
         <Typography variant="h5">Configurações</Typography>
         <Typography variant="body2" sx={{ opacity: 0.85, mt: 0.5 }}>
           Personalize sua experiência
@@ -42,14 +53,25 @@ export function Settings() {
             <ListItem>
               <ListItemIcon>
                 {darkMode
-                  ? <DarkMode sx={{ color: '#ff4e00' }} />
-                  : <LightMode sx={{ color: '#ff4e00' }} />}
+                  ? <DarkMode sx={{ color: theme.palette.primary.main }} />
+                  : <LightMode sx={{ color: theme.palette.primary.main }} />}
               </ListItemIcon>
               <ListItemText
                 primary="Modo escuro"
                 secondary={darkMode ? 'Ativado' : 'Desativado'}
               />
               <Switch checked={darkMode} onChange={toggleDarkMode} sx={switchSx} />
+            </ListItem>
+            <Divider sx={{ borderStyle: highContrast ? 'solid' : 'dashed' }} />
+            <ListItem>
+              <ListItemIcon>
+                <Contrast sx={{ color: theme.palette.primary.main }} />
+              </ListItemIcon>
+              <ListItemText
+                primary="Alto contraste"
+                secondary={highContrast ? 'Ativado' : 'Desativado'}
+              />
+              <Switch checked={highContrast} onChange={toggleHighContrast} sx={switchSx} />
             </ListItem>
           </List>
         </Card>
@@ -61,7 +83,7 @@ export function Settings() {
           <List disablePadding>
             <ListItem>
               <ListItemIcon>
-                <Notifications sx={{ color: '#ff4e00' }} />
+                <Notifications sx={{ color: theme.palette.primary.main }} />
               </ListItemIcon>
               <ListItemText
                 primary="Alertas de eventos"
@@ -82,7 +104,7 @@ export function Settings() {
         <Card sx={{ mt: 1 }}>
           <List disablePadding>
             <ListItem>
-              <ListItemIcon><Language sx={{ color: '#ff4e00' }} /></ListItemIcon>
+              <ListItemIcon><Language sx={{ color: theme.palette.primary.main }} /></ListItemIcon>
               <ListItemText primary="Idioma" secondary="Português (Brasil)" />
             </ListItem>
           </List>
@@ -91,3 +113,4 @@ export function Settings() {
     </Box>
   );
 }
+

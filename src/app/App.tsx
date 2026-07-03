@@ -28,18 +28,79 @@ export type Venue = {
 };
 
 function AppWithTheme() {
-  const { darkMode } = useThemeMode();
+  const { darkMode, highContrast } = useThemeMode();
 
   const theme = createTheme({
     palette: {
-      mode: darkMode ? 'dark' : 'light',
-      primary: { main: '#ff4e00' },
-      secondary: { main: '#ff4e00' },
+      mode: highContrast ? 'dark' : (darkMode ? 'dark' : 'light'),
+      primary: {
+        main: highContrast ? '#ffff00' : '#ff4e00',
+        contrastText: highContrast ? '#000000' : '#ffffff',
+      },
+      secondary: {
+        main: highContrast ? '#ffff00' : '#ff4e00',
+        contrastText: highContrast ? '#000000' : '#ffffff',
+      },
       background: {
-        default: darkMode ? '#121212' : '#f5f5f5',
-        paper: darkMode ? '#1e1e1e' : '#ffffff',
+        default: highContrast ? '#000000' : (darkMode ? '#121212' : '#f5f5f5'),
+        paper: highContrast ? '#000000' : (darkMode ? '#1e1e1e' : '#ffffff'),
+      },
+      text: {
+        primary: highContrast ? '#ffffff' : (darkMode ? '#ffffff' : '#000000'),
+        secondary: highContrast ? '#ffff00' : (darkMode ? '#aaaaaa' : '#555555'),
       },
     },
+    components: highContrast ? {
+      MuiPaper: {
+        styleOverrides: {
+          root: {
+            border: '2px solid #ffffff !important',
+            backgroundImage: 'none !important',
+          },
+        },
+      },
+      MuiCard: {
+        styleOverrides: {
+          root: {
+            border: '2px solid #ffffff !important',
+            borderRadius: '0px !important',
+            backgroundImage: 'none !important',
+          },
+        },
+      },
+      MuiButton: {
+        styleOverrides: {
+          root: {
+            border: '2px solid #ffffff !important',
+            borderRadius: '0px !important',
+            color: '#ffffff !important',
+            backgroundColor: '#000000 !important',
+            '&:hover': {
+              backgroundColor: '#ffffff !important',
+              color: '#000000 !important',
+            },
+          },
+        },
+      },
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            border: '2px solid #ffffff !important',
+            borderRadius: '0px !important',
+            backgroundColor: '#000000 !important',
+            color: '#ffffff !important',
+          },
+        },
+      },
+      MuiDivider: {
+        styleOverrides: {
+          root: {
+            borderColor: '#ffffff !important',
+            borderWidth: '1px !important',
+          },
+        },
+      },
+    } : {},
   });
 
   return (

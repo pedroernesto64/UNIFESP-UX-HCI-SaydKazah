@@ -3,6 +3,7 @@ import { Box, Typography, Card, CardContent, Chip, IconButton, useTheme, SvgIcon
 import { AccessTime, LocationOn, Visibility, ChevronRight, BookmarkBorder, CheckCircle } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 import { events, venues } from '../data/mockData';
+import { useThemeMode } from '../context/ThemeContext';
 
 const categoryColors: Record<string, string> = {
   music: '#9c27b0', theater: '#f44336', food: '#ff9800', art: '#2196f3', workshop: '#4caf50', other: '#607d8b',
@@ -24,6 +25,7 @@ const HamburgerHalfCut = (props: any) => (
 export function Home() {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { highContrast } = useThemeMode();
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>(() => {
     try {
       const saved = localStorage.getItem('saved_event_ids');
@@ -45,7 +47,18 @@ export function Home() {
 
   return (
     <Box sx={{ bgcolor: theme.palette.background.default, minHeight: '100%' }}>
-      <Box sx={{ bgcolor: '#ff4e00', color: 'white', p: 2, display: 'flex', flexDirection: 'column', justifyContent: 'center', position: 'sticky', top: 0, zIndex: 1100 }}>
+      <Box sx={{
+        bgcolor: 'primary.main',
+        color: 'primary.contrastText',
+        p: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        position: 'sticky',
+        top: 0,
+        zIndex: 1100,
+        borderBottom: highContrast ? '2px solid #ffffff' : 'none'
+      }}>
         <Typography variant="h5" sx={{ mb: 0.5 }}>Olá! 👋</Typography>
         <Typography variant="body2" sx={{ opacity: 0.9 }}>
           Descubra eventos incríveis na sua cidade
@@ -53,7 +66,7 @@ export function Home() {
       </Box>
 
       <Box sx={{ p: 2 }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+        <Box sx={{ display: 'flex', justifycontent: 'space-between', alignItems: 'center', mb: 2 }}>
           <Typography variant="h6">Eventos Populares</Typography>
         </Box>
 
@@ -101,7 +114,7 @@ export function Home() {
                   {bookmarkedIds.includes(event.id) ? (
                     <CheckCircle sx={{ color: '#2e7d32', fontSize: 18 }} />
                   ) : (
-                    <BookmarkBorder sx={{ color: '#ff4e00', fontSize: 18 }} />
+                    <BookmarkBorder sx={{ color: theme.palette.primary.main, fontSize: 18 }} />
                   )}
                 </IconButton>
               </Box>
@@ -160,9 +173,9 @@ export function Home() {
                 <Box sx={{ display: 'flex' }}>
                   <Box
                     sx={{
-                      width: 120, minHeight: 120, bgcolor: '#ff4e00',
+                      width: 120, minHeight: 120, bgcolor: 'primary.main',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      color: 'white', fontSize: 40,
+                      color: 'primary.contrastText', fontSize: 40,
                       backgroundImage: venue.image ? `url(${venue.image})` : 'none',
                       backgroundSize: 'cover',
                       backgroundPosition: 'center',
@@ -186,7 +199,7 @@ export function Home() {
                     <Chip
                       label={`${venueEvents.length} eventos`}
                       size="small"
-                      sx={{ fontSize: '0.75rem', bgcolor: '#ff4e00', color: 'white' }}
+                      sx={{ fontSize: '0.75rem', bgcolor: 'primary.main', color: 'primary.contrastText' }}
                     />
                     <IconButton sx={{ position: 'absolute', right: 8, top: '50%', transform: 'translateY(-50%)' }}>
                       <ChevronRight />
@@ -201,3 +214,4 @@ export function Home() {
     </Box>
   );
 }
+

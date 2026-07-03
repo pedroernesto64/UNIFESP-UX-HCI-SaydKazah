@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { Box, Typography, Card, CardContent, IconButton, Chip, useTheme, SvgIcon } from '@mui/material';
 import { ArrowBack, AccessTime, LocationOn, Visibility, BookmarkBorder, CheckCircle } from '@mui/icons-material';
 import { events } from '../data/mockData';
+import { useThemeMode } from '../context/ThemeContext';
 
 const categoryColors: Record<string, string> = {
   music: '#9c27b0', theater: '#f44336', food: '#ff9800', art: '#2196f3', workshop: '#4caf50', other: '#607d8b',
@@ -20,6 +21,7 @@ const HamburgerHalfCut = (props: any) => (
 export function SavedEvents() {
   const navigate = useNavigate();
   const theme = useTheme();
+  const { highContrast } = useThemeMode();
 
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>(() => {
     try {
@@ -43,8 +45,19 @@ export function SavedEvents() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: theme.palette.background.default }}>
-      <Box sx={{ bgcolor: '#ff4e00', color: 'white', p: 2, display: 'flex', alignItems: 'center', gap: 2, position: 'sticky', top: 0, zIndex: 1100 }}>
-        <IconButton onClick={() => navigate('/profile')} sx={{ color: 'white' }}><ArrowBack /></IconButton>
+      <Box sx={{
+        bgcolor: 'primary.main',
+        color: 'primary.contrastText',
+        p: 2,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        position: 'sticky',
+        top: 0,
+        zIndex: 1100,
+        borderBottom: highContrast ? '2px solid #ffffff' : 'none'
+      }}>
+        <IconButton onClick={() => navigate('/profile')} sx={{ color: 'primary.contrastText' }}><ArrowBack /></IconButton>
         <Box>
           <Typography variant="h5">Eventos Salvos</Typography>
           <Typography variant="body2" sx={{ opacity: 0.9, mt: 0.5 }}>
@@ -94,7 +107,7 @@ export function SavedEvents() {
                     {bookmarkedIds.includes(event.id) ? (
                       <CheckCircle sx={{ color: '#2e7d32', fontSize: 18 }} />
                     ) : (
-                      <BookmarkBorder sx={{ color: '#ff4e00', fontSize: 18 }} />
+                      <BookmarkBorder sx={{ color: theme.palette.primary.main, fontSize: 18 }} />
                     )}
                   </IconButton>
                 </Box>
@@ -143,3 +156,4 @@ export function SavedEvents() {
     </Box>
   );
 }
+

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { Box, Typography, Card, CardContent, IconButton, Chip, useTheme, SvgIcon } from '@mui/material';
 import { ArrowBack, AccessTime, LocationOn, Person, Visibility, BookmarkBorder, CheckCircle } from '@mui/icons-material';
 import { events, venues } from '../data/mockData';
+import { useThemeMode } from '../context/ThemeContext';
 
 const categoryColors: Record<string, string> = {
   music: '#9c27b0', theater: '#f44336', food: '#ff9800', art: '#2196f3', workshop: '#4caf50', other: '#607d8b',
@@ -21,6 +22,7 @@ export function VenueDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
+  const { highContrast } = useThemeMode();
 
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>(() => {
     try {
@@ -52,16 +54,29 @@ export function VenueDetail() {
           height: 220,
           display: 'flex',
           alignItems: 'flex-end',
-          color: 'white',
+          color: highContrast ? 'primary.contrastText' : 'white',
           p: 2,
-          backgroundImage: `linear-gradient(to bottom, rgba(0,0,0,0.14), rgba(0,0,0,0.88)), url(${venue.image})`,
+          backgroundImage: highContrast
+            ? 'none'
+            : `linear-gradient(to bottom, rgba(0,0,0,0.14), rgba(0,0,0,0.88)), url(${venue.image})`,
+          bgcolor: highContrast ? 'primary.main' : 'transparent',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          borderBottom: highContrast ? '2px solid #ffffff' : 'none'
         }}
       >
         <IconButton
           onClick={() => navigate(-1)}
-          sx={{ color: 'white', position: 'absolute', top: 16, left: 16, bgcolor: 'rgba(0,0,0,0.3)', '&:hover': { bgcolor: 'rgba(0,0,0,0.45)' } }}
+          sx={{
+            color: highContrast ? 'primary.contrastText' : 'white',
+            position: 'absolute',
+            top: 16,
+            left: 16,
+            bgcolor: highContrast ? 'transparent' : 'rgba(0,0,0,0.3)',
+            '&:hover': { bgcolor: highContrast ? 'transparent' : 'rgba(0,0,0,0.45)' },
+            border: highContrast ? '2px solid #ffffff' : 'none',
+            borderRadius: highContrast ? 0 : '50%'
+          }}
         >
           <ArrowBack />
         </IconButton>
@@ -77,7 +92,15 @@ export function VenueDetail() {
 
       <Box sx={{ p: 2 }}>
         <Typography variant="body2" sx={{ opacity: 0.9, mb: 2 }}>{venue.description}</Typography>
-        <Chip label={`${venueEvents.length} eventos agendados`} sx={{ bgcolor: '#ff4e00', color: 'white', mb: 3 }} />
+        <Chip
+          label={`${venueEvents.length} eventos agendados`}
+          sx={{
+            bgcolor: 'primary.main',
+            color: 'primary.contrastText',
+            mb: 3,
+            border: highContrast ? '2px solid #ffffff' : 'none'
+          }}
+        />
 
         <Typography variant="h6" sx={{ mb: 2 }}>Programação</Typography>
         {venueEvents.length === 0 ? (
@@ -123,7 +146,7 @@ export function VenueDetail() {
                     {bookmarkedIds.includes(event.id) ? (
                       <CheckCircle sx={{ color: '#2e7d32', fontSize: 18 }} />
                     ) : (
-                      <BookmarkBorder sx={{ color: '#ff4e00', fontSize: 18 }} />
+                      <BookmarkBorder sx={{ color: theme.palette.primary.main, fontSize: 18 }} />
                     )}
                   </IconButton>
                 </Box>
@@ -172,3 +195,4 @@ export function VenueDetail() {
     </Box>
   );
 }
+

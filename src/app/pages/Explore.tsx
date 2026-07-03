@@ -11,10 +11,12 @@ import {
   InputAdornment,
   IconButton,
   SvgIcon,
+  useTheme,
 } from '@mui/material';
 import { Search, AccessTime, LocationOn, Visibility, BookmarkBorder, CheckCircle } from '@mui/icons-material';
 import { events } from '../data/mockData';
 import { useNavigate } from 'react-router';
+import { useThemeMode } from '../context/ThemeContext';
 
 const categoryLabels: Record<string, string> = {
   music: 'Música',
@@ -42,6 +44,8 @@ const HamburgerHalfCut = (props: any) => (
 
 export function Explore() {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const { highContrast } = useThemeMode();
   const [category, setCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>([]);
@@ -80,12 +84,16 @@ export function Explore() {
   });
 
   return (
-    <Box>
+    <Box sx={{ bgcolor: theme.palette.background.default, minHeight: '100%' }}>
       <Box
         sx={{
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white',
+          background: highContrast
+            ? 'none'
+            : 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          bgcolor: highContrast ? 'primary.main' : 'transparent',
+          color: highContrast ? 'primary.contrastText' : 'white',
           p: 3,
+          borderBottom: highContrast ? '2px solid #ffffff' : 'none',
         }}
       >
         <Typography variant="h5" sx={{ mb: 2 }}>
@@ -98,28 +106,38 @@ export function Explore() {
           onChange={(e) => setSearchQuery(e.target.value)}
           size="small"
           sx={{
-            bgcolor: 'white',
-            borderRadius: 1,
+            bgcolor: highContrast ? '#000000' : 'white',
+            borderRadius: highContrast ? 0 : 1,
+            border: highContrast ? '2px solid #ffffff' : 'none',
             '& .MuiOutlinedInput-root': {
+              color: highContrast ? '#ffffff' : 'inherit',
               '& fieldset': { border: 'none' },
             },
           }}
           InputProps={{
             startAdornment: (
               <InputAdornment position="start">
-                <Search />
+                <Search sx={{ color: highContrast ? '#ffffff' : 'inherit' }} />
               </InputAdornment>
             ),
           }}
         />
       </Box>
 
-      <Box sx={{ borderBottom: 1, borderColor: 'divider', bgcolor: 'white' }}>
+      <Box sx={{ borderBottom: 1, borderColor: highContrast ? '#ffffff' : 'divider', bgcolor: theme.palette.background.paper }}>
         <Tabs
           value={category}
           onChange={(_, newValue) => setCategory(newValue)}
           variant="scrollable"
           scrollButtons="auto"
+          sx={{
+            '& .MuiTabs-indicator': {
+              backgroundColor: theme.palette.primary.main,
+            },
+            '& .MuiTab-root.Mui-selected': {
+              color: theme.palette.primary.main,
+            },
+          }}
         >
           <Tab label="Todos" value="all" />
           <Tab label="Música" value="music" />
@@ -177,7 +195,7 @@ export function Explore() {
                     {bookmarkedIds.includes(event.id) ? (
                       <CheckCircle sx={{ color: '#2e7d32', fontSize: 18 }} />
                     ) : (
-                      <BookmarkBorder sx={{ color: '#ff4e00', fontSize: 18 }} />
+                      <BookmarkBorder sx={{ color: theme.palette.primary.main, fontSize: 18 }} />
                     )}
                   </IconButton>
                 </Box>
@@ -226,3 +244,4 @@ export function Explore() {
     </Box>
   );
 }
+

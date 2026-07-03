@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router';
 import { Box, Typography, IconButton, Button, Card, CardContent, Chip, Divider, useTheme } from '@mui/material';
 import { ArrowBack, AccessTime, LocationOn, Person, Bookmark, BookmarkBorder, Language } from '@mui/icons-material';
 import { events } from '../data/mockData';
+import { useThemeMode } from '../context/ThemeContext';
 
 const categoryColors: Record<string, string> = {
   music: '#9c27b0', theater: '#f44336', food: '#ff9800', art: '#2196f3', workshop: '#4caf50', other: '#607d8b',
@@ -15,6 +16,7 @@ export function EventDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const theme = useTheme();
+  const { highContrast } = useThemeMode();
 
   const [bookmarkedIds, setBookmarkedIds] = useState<string[]>(() => {
     try {
@@ -44,22 +46,37 @@ export function EventDetail() {
         sx={{
           position: 'relative',
           height: 220,
-          bgcolor: categoryColors[event.category],
-          color: 'white',
+          bgcolor: highContrast ? 'primary.main' : categoryColors[event.category],
+          color: highContrast ? 'primary.contrastText' : 'white',
           display: 'flex',
           alignItems: 'flex-end',
           p: 2,
-          backgroundImage: `url(${event.image})`,
+          backgroundImage: highContrast ? 'none' : `url(${event.image})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
+          borderBottom: highContrast ? '2px solid #ffffff' : 'none'
         }}
       >
-        <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(0,0,0,0.35)' }} />
-        <IconButton onClick={() => navigate(-1)} sx={{ color: 'white', position: 'absolute', top: 16, left: 16, bgcolor: 'rgba(0,0,0,0.3)', '&:hover': { bgcolor: 'rgba(0,0,0,0.45)' } }}><ArrowBack /></IconButton>
+        {!highContrast && <Box sx={{ position: 'absolute', inset: 0, bgcolor: 'rgba(0,0,0,0.35)' }} />}
+        <IconButton
+          onClick={() => navigate(-1)}
+          sx={{
+            color: highContrast ? 'primary.contrastText' : 'white',
+            position: 'absolute',
+            top: 16,
+            left: 16,
+            bgcolor: highContrast ? 'transparent' : 'rgba(0,0,0,0.3)',
+            '&:hover': { bgcolor: highContrast ? 'transparent' : 'rgba(0,0,0,0.45)' },
+            border: highContrast ? '2px solid #ffffff' : 'none',
+            borderRadius: highContrast ? 0 : '50%'
+          }}
+        >
+          <ArrowBack />
+        </IconButton>
         <Box sx={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'flex-end', pl: 3, pb: 2 }}>
           <Box>
             <Chip label={categoryLabels[event.category]} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.3)', color: 'white', mb: 1 }} />
-            <Typography variant="h5" sx={{ mb: 1, color: 'white' }}>{event.title}</Typography>
+            <Typography variant="h5" sx={{ mb: 1, color: highContrast ? 'primary.contrastText' : 'white' }}>{event.title}</Typography>
           </Box>
         </Box>
       </Box>
@@ -69,7 +86,7 @@ export function EventDetail() {
           <CardContent>
             <Typography variant="h6" sx={{ mb: 2 }}>Informações</Typography>
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
-              <AccessTime sx={{ color: '#ff4e00' }} />
+              <AccessTime sx={{ color: theme.palette.primary.main }} />
               <Box>
                 <Typography variant="body2" color="text.secondary">Data e Horário</Typography>
                 <Typography variant="body1">
@@ -79,7 +96,7 @@ export function EventDetail() {
             </Box>
             <Divider sx={{ my: 2 }} />
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: event.organizer ? 0 : 2 }}>
-              <LocationOn sx={{ color: '#ff4e00' }} />
+              <LocationOn sx={{ color: theme.palette.primary.main }} />
               <Box>
                 <Typography variant="body2" color="text.secondary">Local</Typography>
                 <Typography variant="body1">{event.location}</Typography>
@@ -89,7 +106,7 @@ export function EventDetail() {
               <>
                 <Divider sx={{ my: 2 }} />
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                  <Person sx={{ color: '#ff4e00' }} />
+                  <Person sx={{ color: theme.palette.primary.main }} />
                   <Box>
                     <Typography variant="body2" color="text.secondary">Organizador</Typography>
                     <Typography variant="body1">{event.organizer}</Typography>
@@ -109,7 +126,19 @@ export function EventDetail() {
 
         <Card sx={{ mb: 2 }}>
           <CardContent>
-            <Button fullWidth variant="outlined" startIcon={<Language />} sx={{ mb: 1, borderColor: '#ff4e00', color: '#ff4e00', '&:hover': { borderColor: '#cc3d00', bgcolor: 'rgba(255,78,0,0.04)' } }}>
+            <Button
+              fullWidth variant="outlined" startIcon={<Language />}
+              sx={{
+                mb: 1,
+                borderColor: theme.palette.primary.main,
+                color: theme.palette.primary.main,
+                '&:hover': {
+                  borderColor: theme.palette.primary.dark,
+                  bgcolor: theme.palette.action.hover
+                },
+                borderWidth: highContrast ? '2px' : '1px'
+              }}
+            >
               Visitar Site do Evento
             </Button>
             <Typography variant="caption" color="text.secondary" align="center" sx={{ display: 'block' }}>
@@ -122,7 +151,13 @@ export function EventDetail() {
           fullWidth variant="contained" size="large"
           startIcon={isSaved ? <Bookmark /> : <BookmarkBorder />}
           onClick={handleToggleBookmark}
-          sx={{ bgcolor: isSaved ? '#4caf50' : '#ff4e00', py: 1.5, '&:hover': { bgcolor: isSaved ? '#45a049' : '#cc3d00' } }}
+          sx={{
+            bgcolor: isSaved ? (highContrast ? '#000000' : '#4caf50') : 'primary.main',
+            color: isSaved ? '#ffffff' : 'primary.contrastText',
+            py: 1.5,
+            '&:hover': { bgcolor: isSaved ? (highContrast ? '#000000' : '#45a049') : 'primary.dark' },
+            border: highContrast ? '2px solid #ffffff' : 'none'
+          }}
         >
           {isSaved ? 'Evento Salvo' : 'Salvar Evento'}
         </Button>
@@ -130,3 +165,4 @@ export function EventDetail() {
     </Box>
   );
 }
+

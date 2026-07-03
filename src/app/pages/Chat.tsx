@@ -56,7 +56,7 @@ const getInitialMessages = (): Message[] => {
 export function Chat() {
   const navigate = useNavigate();
   const theme = useTheme();
-  const { userName } = useThemeMode();
+  const { userName, highContrast } = useThemeMode();
   const initialLetter = userName.trim().charAt(0).toUpperCase() || 'U';
   const [messages, setMessages] = useState<Message[]>(getInitialMessages);
   const [input, setInput] = useState('');
@@ -135,8 +135,16 @@ export function Chat() {
 
   return (
     <Box sx={{ height: '100%', display: 'flex', flexDirection: 'column', bgcolor: theme.palette.background.default }}>
-      <Box sx={{ bgcolor: '#ff4e00', color: 'white', p: 2, display: 'flex', alignItems: 'center', gap: 2 }}>
-        <IconButton onClick={() => navigate('/')} sx={{ color: 'white' }}><ArrowBack /></IconButton>
+      <Box sx={{
+        bgcolor: 'primary.main',
+        color: 'primary.contrastText',
+        p: 2,
+        display: 'flex',
+        alignItems: 'center',
+        gap: 2,
+        borderBottom: highContrast ? '2px solid #ffffff' : 'none'
+      }}>
+        <IconButton onClick={() => navigate('/')} sx={{ color: 'primary.contrastText' }}><ArrowBack /></IconButton>
         <SmartToy sx={{ fontSize: 32 }} />
         <Box>
           <Typography variant="h6">Converse com o Sayd</Typography>
@@ -147,9 +155,18 @@ export function Chat() {
       <Box sx={{ flex: 1, overflowY: 'auto', p: 2, display: 'flex', flexDirection: 'column', gap: 2 }}>
         {messages.map((message) => (
           <Box key={message.id} sx={{ display: 'flex', justifyContent: message.sender === 'user' ? 'flex-end' : 'flex-start', gap: 1 }}>
-            {message.sender === 'ai' && <Avatar sx={{ bgcolor: '#ff4e00' }}><SmartToy /></Avatar>}
+            {message.sender === 'ai' && (
+              <Avatar sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', border: highContrast ? '1px solid #ffffff' : 'none' }}>
+                <SmartToy />
+              </Avatar>
+            )}
             <Box sx={{ maxWidth: '75%' }}>
-              <Paper sx={{ p: 2, bgcolor: message.sender === 'user' ? '#ff4e00' : theme.palette.background.paper, color: message.sender === 'user' ? 'white' : 'text.primary' }}>
+              <Paper sx={{
+                p: 2,
+                bgcolor: message.sender === 'user' ? 'primary.main' : theme.palette.background.paper,
+                color: message.sender === 'user' ? 'primary.contrastText' : 'text.primary',
+                border: highContrast ? '1px solid #ffffff' : 'none'
+              }}>
                 <Typography variant="body1">{message.text}</Typography>
                 <Typography variant="caption" sx={{ display: 'block', mt: 0.5, opacity: 0.7 }}>
                   {message.timestamp.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
@@ -203,7 +220,7 @@ export function Chat() {
                           {bookmarkedIds.includes(event.id) ? (
                             <CheckCircle sx={{ color: '#2e7d32', fontSize: 18 }} />
                           ) : (
-                            <BookmarkBorder sx={{ color: '#ff4e00', fontSize: 18 }} />
+                            <BookmarkBorder sx={{ color: theme.palette.primary.main, fontSize: 18 }} />
                           )}
                         </IconButton>
                       </Box>
@@ -249,16 +266,20 @@ export function Chat() {
                 </Box>
               )}
             </Box>
-            {message.sender === 'user' && <Avatar sx={{ bgcolor: '#cc3d00' }}>{initialLetter}</Avatar>}
+            {message.sender === 'user' && (
+              <Avatar sx={{ bgcolor: 'secondary.main', color: 'secondary.contrastText', border: highContrast ? '1px solid #ffffff' : 'none' }}>
+                {initialLetter}
+              </Avatar>
+            )}
           </Box>
         ))}
         {isTyping && (
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Avatar sx={{ bgcolor: '#ff4e00' }}><SmartToy /></Avatar>
-            <Paper sx={{ p: 2 }}>
+            <Avatar sx={{ bgcolor: 'primary.main', color: 'primary.contrastText', border: highContrast ? '1px solid #ffffff' : 'none' }}><SmartToy /></Avatar>
+            <Paper sx={{ p: 2, border: highContrast ? '1px solid #ffffff' : 'none' }}>
               <Box sx={{ display: 'flex', gap: 0.5 }}>
                 {[0, 0.2, 0.4].map((delay, i) => (
-                  <Box key={i} sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#ff4e00', animation: 'typing 1.4s infinite', animationDelay: `${delay}s`, '@keyframes typing': { '0%, 60%, 100%': { transform: 'translateY(0)' }, '30%': { transform: 'translateY(-10px)' } } }} />
+                  <Box key={i} sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'primary.main', animation: 'typing 1.4s infinite', animationDelay: `${delay}s`, '@keyframes typing': { '0%, 60%, 100%': { transform: 'translateY(0)' }, '30%': { transform: 'translateY(-10px)' } } }} />
                 ))}
               </Box>
             </Paper>
@@ -267,11 +288,16 @@ export function Chat() {
         <div ref={messagesEndRef} />
       </Box>
 
-      <Box sx={{ p: 2, bgcolor: theme.palette.background.paper, borderTop: `1px solid ${theme.palette.divider}` }}>
+      <Box sx={{ p: 2, bgcolor: theme.palette.background.paper, borderTop: highContrast ? '2px solid #ffffff' : `1px solid ${theme.palette.divider}` }}>
         <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
           <IconButton
             onClick={handleVoiceInput}
-            sx={{ bgcolor: isListening ? '#ff4e00' : theme.palette.action.hover, color: isListening ? 'white' : '#ff4e00', '&:hover': { bgcolor: isListening ? '#cc3d00' : theme.palette.action.selected } }}
+            sx={{
+              bgcolor: isListening ? 'error.main' : theme.palette.action.hover,
+              color: isListening ? 'white' : theme.palette.primary.main,
+              '&:hover': { bgcolor: isListening ? 'error.dark' : theme.palette.action.selected },
+              border: highContrast ? '1px solid #ffffff' : 'none'
+            }}
           >
             <Mic />
           </IconButton>
@@ -280,10 +306,21 @@ export function Chat() {
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && handleSend()}
             size="small"
+            sx={{
+              '& .MuiOutlinedInput-root': {
+                borderRadius: highContrast ? 0 : '4px',
+              }
+            }}
           />
           <IconButton
             onClick={handleSend} disabled={!input.trim()}
-            sx={{ bgcolor: '#ff4e00', color: 'white', '&:hover': { bgcolor: '#cc3d00' }, '&:disabled': { bgcolor: theme.palette.action.disabledBackground } }}
+            sx={{
+              bgcolor: 'primary.main',
+              color: 'primary.contrastText',
+              '&:hover': { bgcolor: 'primary.dark' },
+              '&:disabled': { bgcolor: theme.palette.action.disabledBackground },
+              border: highContrast ? '1px solid #ffffff' : 'none'
+            }}
           >
             <Send />
           </IconButton>
@@ -292,3 +329,4 @@ export function Chat() {
     </Box>
   );
 }
+
