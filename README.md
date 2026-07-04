@@ -1,7 +1,6 @@
 
-  # Event registration app
-
-  This is a code bundle for Event registration app. The original project is available at https://www.figma.com/design/rBAWSPWJYTj4RFxUJ42jam/Event-registration-app.
+  # Sayd Kazah
+  Frontend mockup of an AI-powered event recommendation app. Made as UNIFESP's (Federal University of São Paulo) HCI-UX final project.
 
   ## Running the code
 
